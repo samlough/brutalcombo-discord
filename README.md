@@ -25,9 +25,9 @@ Each story is a card with the headline, a short summary, the story image, its ca
 
 **Can I post to more than one channel?** Yes. Click Add to Discord again and pick another channel.
 
-**How do I move it to a different channel?** In Discord, open **Server Settings → Integrations → Webhooks**, click **Brutal Combo**, and change its channel. Or remove it and add it again.
+**How do I move it to a different channel?** In Discord, open **Server Settings → Integrations**. Under "Bots and Apps", click **Manage** next to **Brutal Combo**, click the webhook listed there, and pick a new channel from the **Channel** list.
 
-**How do I remove it?** Open **Server Settings → Integrations → Webhooks**, click **Brutal Combo**, and choose **Delete Webhook**. The posts stop immediately.
+**How do I remove it?** Open **Server Settings → Integrations**, click **Manage** next to **Brutal Combo**, and click **Remove App**. The posts stop immediately.
 
 **What can it see or do in my server?** It can post in the one channel you picked. That is all. It can't read messages, see members, or touch any other channel. No bot joins your server.
 
