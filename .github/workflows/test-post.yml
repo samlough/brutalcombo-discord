@@ -1,7 +1,8 @@
 name: Send test post
 
-# Run by hand from the Actions tab. Posts the newest story once,
-# whether or not it has been posted before.
+# Run by hand from the Actions tab. Posts the newest story once, whether
+# or not it has been posted before. It goes to the webhook channel if a
+# webhook is set, and otherwise to every server the bot is set up in.
 on:
   workflow_dispatch:
 
@@ -17,5 +18,7 @@ jobs:
 
       - name: Post the newest story
         env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CHANNEL_NAME: ${{ vars.CHANNEL_NAME }}
         run: python3 poster.py --test
