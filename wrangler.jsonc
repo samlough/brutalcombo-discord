@@ -19,7 +19,9 @@
   // Cloudflare dashboard and never appears in this repository.
   "vars": {
     "DISCORD_CLIENT_ID": "1572135220398923826",
-    "FEED_URL": "https://brutalcombo.com/feed.xml"
+    "FEED_URL": "https://brutalcombo.com/feed.xml",
+    // The picture shown on every post. It is the logo.png file in this repository.
+    "POST_AVATAR_URL": "https://raw.githubusercontent.com/samlough/brutalcombo-discord/main/logo.png"
   },
 
   "observability": {

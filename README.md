@@ -1,3 +1,5 @@
+<img src="logo.png" width="96" height="96" alt="Brutal Combo logo">
+
 # Brutal Combo for Discord
 
 Get new gaming stories from [Brutal Combo](https://brutalcombo.com/) posted in your Discord server, automatically and for free.
@@ -49,6 +51,7 @@ The files:
 - `src/index.js`: the web addresses and the timer.
 - `src/core.js`: everything else: reading the feed, building the cards, connecting channels and delivering stories.
 - `wrangler.jsonc`: the Cloudflare settings.
+- `logo.png`: the picture shown on every post.
 
 Connected channels and the list of posted stories are kept in Cloudflare's key-value storage, not in this repository.
 
