@@ -1,0 +1,28 @@
+{
+  // Cloudflare Worker settings. Cloudflare reads this file on every deploy.
+  "name": "brutalcombo-discord",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+
+  // Check for new stories every two minutes.
+  "triggers": {
+    "crons": ["*/2 * * * *"]
+  },
+
+  // Storage for connected channels and the list of posted stories.
+  // Cloudflare creates it on the first deploy.
+  "kv_namespaces": [
+    { "binding": "STATE" }
+  ],
+
+  // Not secret. The matching secret, DISCORD_CLIENT_SECRET, is set in the
+  // Cloudflare dashboard and never appears in this repository.
+  "vars": {
+    "DISCORD_CLIENT_ID": "1572135220398923826",
+    "FEED_URL": "https://brutalcombo.com/feed.xml"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
