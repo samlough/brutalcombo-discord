@@ -1,0 +1,40 @@
+name: Post new stories
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Never run two checks at once, so a story can't be posted twice.
+concurrency:
+  group: poster
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the feed and post new stories
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SKIP_CATEGORIES: ${{ vars.SKIP_CATEGORIES }}
+        run: python3 poster.py --once
+
+      # Runs even if the step above failed part way, so stories that
+      # were already posted are remembered.
+      - name: Save the list of posted stories
+        if: always()
+        run: |
+          if [ ! -f seen.json ]; then exit 0; fi
+          git add seen.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update posted stories"
+          git push
