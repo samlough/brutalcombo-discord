@@ -67,3 +67,7 @@ You only need this if you want your own version, for example for a different new
 6. Back in the Discord Developer Portal, on the **OAuth2** page, add a redirect: your Worker's address followed by `/callback`.
 
 Your Add to Discord link is your Worker's address followed by `/install`.
+
+## License
+
+The source code is released under the [MIT License](LICENSE). The Brutal Combo name, logo (`logo.png`), and feed content belong to Brutal Combo and are not covered by this license.
