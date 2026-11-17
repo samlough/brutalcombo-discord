@@ -13,6 +13,8 @@
 const DISCORD_API = "https://discord.com/api/v10";
 const USER_AGENT = "DiscordBot (https://brutalcombo.com, 3.0)";
 const DEFAULT_FEED = "https://brutalcombo.com/feed.xml";
+const DEFAULT_NAME = "Brutal Combo";
+const DEFAULT_AVATAR = "https://brutalcombo.com/icon.png";
 const EMBED_COLOR = 0xe11d2e;
 const MAX_SEEN = 1000;
 const MAX_RETRIES = 3;
@@ -134,14 +136,23 @@ async function embedFor(item, deps) {
 
 // ---------------------------------------------------------------- Discord
 
-/** Returns "ok", "gone" (the webhook was deleted), "retry" or "bad". */
-export async function postToHook(deps, hook, embeds) {
+/**
+ * Posts to one connected channel. The name and picture are sent with every
+ * message, so each post shows the Brutal Combo name and logo no matter how
+ * the webhook itself is set up in Discord.
+ * Returns "ok", "gone" (the webhook was deleted), "retry" or "bad".
+ */
+export async function postToHook(env, deps, hook, embeds) {
   let response;
   try {
     response = await deps.fetch(DISCORD_API + "/webhooks/" + hook.id + "/" + hook.token, {
       method: "POST",
       headers: { "Content-Type": "application/json", "User-Agent": USER_AGENT },
-      body: JSON.stringify({ embeds }),
+      body: JSON.stringify({
+        username: env.POST_NAME || DEFAULT_NAME,
+        avatar_url: env.POST_AVATAR_URL || DEFAULT_AVATAR,
+        embeds,
+      }),
     });
   } catch (err) {
     return "retry";
@@ -219,7 +230,7 @@ export async function runTick(env, deps) {
 
   const deliver = async (key, hook, tries) => {
     budget--;
-    const result = await postToHook(deps, hook, job.embeds);
+    const result = await postToHook(env, deps, hook, job.embeds);
     if (result === "ok") sent++;
     else if (result === "gone") {
       await env.STATE.delete(key);
@@ -359,7 +370,7 @@ export async function handleCallback(request, env, deps) {
   } catch (err) {
     // The welcome message still goes out without a sample story.
   }
-  const result = await postToHook(deps, hook, embeds);
+  const result = await postToHook(env, deps, hook, embeds);
 
   return {
     status: 200,
