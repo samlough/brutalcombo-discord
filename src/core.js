@@ -163,6 +163,48 @@ export async function postToHook(env, deps, hook, embeds) {
   return "bad";
 }
 
+const BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+export function toBase64(bytes) {
+  let out = "";
+  for (let i = 0; i < bytes.length; i += 3) {
+    const a = bytes[i];
+    const b = i + 1 < bytes.length ? bytes[i + 1] : 0;
+    const c = i + 2 < bytes.length ? bytes[i + 2] : 0;
+    out += BASE64[a >> 2] + BASE64[((a & 3) << 4) | (b >> 4)];
+    out += i + 1 < bytes.length ? BASE64[((b & 15) << 2) | (c >> 6)] : "=";
+    out += i + 2 < bytes.length ? BASE64[c & 63] : "=";
+  }
+  return out;
+}
+
+/**
+ * Gives a newly connected webhook the Brutal Combo name and logo, so it also
+ * looks right in the server's Integrations settings. Posts carry the name and
+ * logo themselves, so nothing breaks if this fails.
+ */
+async function brandHook(env, deps, hook) {
+  try {
+    const image = await deps.fetch(env.POST_AVATAR_URL || DEFAULT_AVATAR, {
+      headers: { "User-Agent": USER_AGENT },
+    });
+    if (!image.ok) return false;
+    const type = ((image.headers && image.headers.get("content-type")) || "image/png").split(";")[0];
+    const bytes = new Uint8Array(await image.arrayBuffer());
+    const response = await deps.fetch(DISCORD_API + "/webhooks/" + hook.id + "/" + hook.token, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "User-Agent": USER_AGENT },
+      body: JSON.stringify({
+        name: env.POST_NAME || DEFAULT_NAME,
+        avatar: "data:" + type + ";base64," + toBase64(bytes),
+      }),
+    });
+    return response.ok;
+  } catch (err) {
+    return false;
+  }
+}
+
 // ---------------------------------------------------------------- storage
 
 async function saveJob(env, deps, job) {
@@ -362,6 +404,7 @@ export async function handleCallback(request, env, deps) {
     }
   }
   await env.STATE.put(key, "", { metadata: { id: hook.id, token: hook.token } });
+  await brandHook(env, deps, hook);
 
   const embeds = [welcomeEmbed()];
   try {
