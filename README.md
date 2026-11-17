@@ -1,80 +1,68 @@
-# Brutal Combo Discord poster
+# Brutal Combo for Discord
 
-Get new stories from [Brutal Combo](https://brutalcombo.com/) posted to a channel in your Discord server, automatically and for free.
+Get new gaming stories from [Brutal Combo](https://brutalcombo.com/) posted in your Discord server, automatically and for free.
 
-Each story appears as a card with the headline, a short summary, the story image, its category (Release, Patch, Rumor and so on) and a link to the full article.
+[![Add to Discord](https://img.shields.io/badge/Add%20to%20Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1572135220398923826&scope=bot&permissions=19456)
 
-There is no bot to invite and nothing to install. You make your own copy of this repository, and GitHub runs it for you on a schedule.
+## Set it up in two steps
 
-## What you need
+You need to be an owner or admin of the server. No account to create, nothing to install.
 
-- A free [GitHub](https://github.com/) account.
-- A Discord server where you are allowed to manage webhooks (server owners and admins are).
+**1. Add the bot.** Click **[Add to Discord](https://discord.com/oauth2/authorize?client_id=1572135220398923826&scope=bot&permissions=19456)**, pick your server, and click **Authorize**.
 
-## Set it up
+**2. Make a channel named `brutal-combo`.** In your server, click the **+** next to "Text Channels", type `brutal-combo` as the name, and click **Create Channel**.
 
-It takes about five minutes.
+That's it. Within about 20 minutes the bot posts a "Brutal Combo is connected" message in that channel, along with the latest story. After that, every new story shows up there on its own.
 
-### 1. Make a webhook in Discord
+## What the posts look like
 
-1. In Discord, hover over the channel you want stories in and click the gear icon (**Edit Channel**).
-2. Go to **Integrations → Webhooks → New Webhook**.
-3. Click **Copy Webhook URL**.
+Each story is a card with the headline, a short summary, the story image, its category (Release, Patch, Rumor and so on) and a link to the full article. Stories usually appear 5 to 20 minutes after they are published.
 
-Keep that URL private. Anyone who has it can post to your channel.
+## If nothing shows up
 
-### 2. Copy this repository
+Give it 30 minutes first. Then check these, in order:
 
-Click **Fork** at the top of this page, then **Create fork**. Leave it public: GitHub runs scheduled jobs for free on public repositories.
+- **The channel name is exactly `brutal-combo`.** Lowercase, with the dash, no extra words.
+- **The bot can see the channel.** If the channel is private, open **Edit Channel → Permissions** and add the **Brutal Combo** bot.
+- **The bot is allowed to post.** In the channel's permissions, the bot needs **View Channel**, **Send Messages** and **Embed Links**. The Add to Discord link asks for exactly these three and nothing else.
 
-### 3. Add your webhook to your copy
+Fix any of these and the welcome message arrives on the next check. You don't need to add the bot again.
 
-1. In your fork, go to **Settings → Secrets and variables → Actions**.
-2. Click **New repository secret**.
-3. Name it `DISCORD_WEBHOOK_URL`, paste the webhook URL as the secret, and click **Add secret**.
+## Questions
 
-The URL is stored encrypted. It never appears in the code or in the logs.
+**Can I use a different channel name?** Not yet. The bot looks for a channel named `brutal-combo`.
 
-### 4. Switch it on
+**Can I move or rename the channel later?** Move it anywhere you like. If you rename it, the posts stop until a channel named `brutal-combo` exists again.
 
-GitHub turns scheduled jobs off in a new fork until you allow them.
+**What can the bot see?** It can't read your messages. It only posts stories. It has no access to members, DMs or other channels' content.
 
-1. Open the **Actions** tab of your fork and click the button to enable workflows.
-2. In the list on the left, click **Post new stories**. If you see a notice that the scheduled workflow is disabled, click **Enable workflow**.
+**How do I remove it?** Kick the **Brutal Combo** bot from your server, or delete the channel to pause it.
 
-### 5. Check it works
+**Does it cost anything?** No.
 
-Still in the **Actions** tab, click **Send test post → Run workflow → Run workflow**. Within a minute the newest story should appear in your channel.
+---
 
-That's it. New stories now post on their own.
+## For the curious: how it works
 
-## How often it checks
+Everything runs from this repository. There is no server behind it.
 
-The schedule asks GitHub to check every 5 minutes. GitHub's free scheduler often runs late, so expect a story to appear roughly 5 to 20 minutes after it is published.
+- `poster.py` is one Python script with no dependencies. It reads the site's [RSS feed](https://brutalcombo.com/feed.xml) and posts any story it hasn't posted before.
+- GitHub Actions runs the script every few minutes (see `.github/workflows`).
+- `seen.json` records which stories have been posted, so nothing is posted twice. `servers.json` records which servers have had their welcome message, as scrambled values rather than real server IDs.
 
-## Options
+### Run your own copy
 
-**Skip some categories.** In **Settings → Secrets and variables → Actions**, open the **Variables** tab and add a variable named `SKIP_CATEGORIES`, for example `Rumor,Business`. The categories are Announcement, Business, Feature, Patch, Platform, Release, Release Date, Rumor, Showcase and Trailer.
+You only need this if you want your own bot or a different news feed.
 
-**Post to more than one channel.** Make one fork per channel, each with its own webhook.
+1. Fork this repository and keep the fork public.
+2. In your fork, go to **Settings → Secrets and variables → Actions** and add one or both secrets:
+   - `DISCORD_BOT_TOKEN`: the token of a bot you create in the [Discord Developer Portal](https://discord.com/developers/applications). It posts in every server the bot is added to.
+   - `DISCORD_WEBHOOK_URL`: a webhook URL from **Edit Channel → Integrations → Webhooks**. It posts in that one channel.
+3. Open the **Actions** tab, enable workflows, and enable the **Post new stories** schedule.
 
-**Change the look.** The name and avatar on each post come from the webhook. Edit them in Discord under **Integrations → Webhooks**.
+Optional repository variables: `CHANNEL_NAME` (default `brutal-combo`) and `SKIP_CATEGORIES` (for example `Rumor,Business`). To use a different feed, change the default feed address near the bottom of `poster.py`.
 
-## Turning it off
-
-In the **Actions** tab, click **Post new stories**, open the **⋯** menu and choose **Disable workflow**. Or delete the webhook in Discord, or delete your fork.
-
-## Good to know
-
-- **A run failed.** GitHub emails you when a run fails. The usual cause is a missing or mistyped `DISCORD_WEBHOOK_URL` secret, or a webhook that was deleted in Discord.
-- **It stopped after a long quiet spell.** GitHub pauses schedules on public repositories that see no activity for 60 days. Re-enable it from the **Actions** tab.
-- **Lots of commits called "Update posted stories".** That is expected. The list of stories already posted is kept in `seen.json`, so nothing is posted twice.
-
-## How it works
-
-`poster.py` is a single Python script with no dependencies. Every run it reads the site's [RSS feed](https://brutalcombo.com/feed.xml), posts any story that is not in `seen.json` through the Discord webhook, and adds it to `seen.json`. The two files in `.github/workflows` tell GitHub when to run it.
-
-To run it on your own computer instead, copy `.env.example` to `.env`, put your webhook URL in it, and use:
+To run it on your own computer, copy `.env.example` to `.env`, fill it in, and use:
 
 ```
 python3 poster.py --dry-run --once   # show what would be posted, send nothing
