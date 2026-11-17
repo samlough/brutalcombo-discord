@@ -10,9 +10,9 @@
   },
 
   // Storage for connected channels and the list of posted stories.
-  // Cloudflare creates it on the first deploy.
+  // The id is not secret; it only works inside the owning Cloudflare account.
   "kv_namespaces": [
-    { "binding": "STATE" }
+    { "binding": "STATE", "id": "8a2af5b2c48949eb97bc5450c58dfb92" }
   ],
 
   // Not secret. The matching secret, DISCORD_CLIENT_SECRET, is set in the
