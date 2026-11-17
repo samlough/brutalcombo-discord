@@ -1,0 +1,21 @@
+name: Send test post
+
+# Run by hand from the Actions tab. Posts the newest story once,
+# whether or not it has been posted before.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Post the newest story
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python3 poster.py --test
