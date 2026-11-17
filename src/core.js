@@ -14,7 +14,7 @@ const DISCORD_API = "https://discord.com/api/v10";
 const USER_AGENT = "DiscordBot (https://brutalcombo.com, 3.0)";
 const DEFAULT_FEED = "https://brutalcombo.com/feed.xml";
 const DEFAULT_NAME = "Brutal Combo";
-const DEFAULT_AVATAR = "https://brutalcombo.com/icon.png";
+const DEFAULT_AVATAR = "https://raw.githubusercontent.com/samlough/brutalcombo-discord/main/logo.png";
 const EMBED_COLOR = 0xe11d2e;
 const MAX_SEEN = 1000;
 const MAX_RETRIES = 3;
@@ -435,7 +435,7 @@ function page(title, bodyHtml) {
     "body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;" +
     "background:#0f0f12;color:#f2f2f3;font:17px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}" +
     "main{max-width:30rem;padding:2rem 1.25rem;text-align:center}" +
-    "h1{font-size:1.9rem;line-height:1.2;margin:0 0 .75rem}p{margin:.6rem 0;color:#c9c9cf}" +
+    "img.logo{border-radius:50%;margin-bottom:1rem}h1{font-size:1.9rem;line-height:1.2;margin:0 0 .75rem}p{margin:.6rem 0;color:#c9c9cf}" +
     "a.button{display:inline-block;margin-top:1.25rem;padding:.8rem 1.5rem;border-radius:.5rem;" +
     "background:#5865f2;color:#fff;font-weight:600;text-decoration:none}" +
     "a.button:hover{background:#4752c4}small{display:block;margin-top:1.5rem;color:#8a8a93}" +
@@ -443,10 +443,11 @@ function page(title, bodyHtml) {
   );
 }
 
-export function landingPage() {
+export function landingPage(env) {
   return page(
     "Add to Discord",
-    "<h1>Brutal Combo for Discord</h1>" +
+    '<img class="logo" src="' + (env.POST_AVATAR_URL || DEFAULT_AVATAR) + '" width="112" height="112" alt="">' +
+      "<h1>Brutal Combo for Discord</h1>" +
       "<p>Get new gaming stories from Brutal Combo posted in your server, automatically and for free.</p>" +
       "<p>Click the button, pick your server and the channel you want, and you're done.</p>" +
       '<a class="button" href="/install">Add to Discord</a>' +

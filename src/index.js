@@ -49,7 +49,7 @@ export default {
     }
 
     if (url.pathname === "/") {
-      return htmlResponse(core.landingPage());
+      return htmlResponse(core.landingPage(env));
     }
 
     if (url.pathname === "/install") {
